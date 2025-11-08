@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import CheckinButton from '../components/CheckinButton';
 import StatsDisplay from '../components/StatsDisplay';
@@ -28,6 +28,13 @@ export default function HomePage() {
       </header>
       
       <main className="home-main">
+        <section className="quick-links">
+          <Link to="/avatar" className="quick-link-card">
+            <span className="link-icon">🧑</span>
+            <span className="link-text">アバター編集</span>
+          </Link>
+        </section>
+        
         <section className="checkin-section">
           <CheckinButton />
         </section>
