@@ -11,6 +11,7 @@ import authRoutes from './routes/auth.js';
 import checkinRoutes from './routes/checkins.js';
 import statsRoutes from './routes/stats.js';
 import avatarRoutes from './routes/avatar.js';
+import questRoutes from './routes/quests.js';
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.get('/healthz', (req, res) => {
 app.use('/auth', authLimiter, authRoutes);
 app.use('/checkins', checkinRoutes);
 app.use('/avatar', avatarRoutes);
+app.use('/quests', questRoutes);
 app.use('/', statsRoutes); // public/stats, leaderboard, users/:id/summary
 
 // 404 handler
