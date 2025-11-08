@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { SocketProvider } from './contexts/SocketContext';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import AvatarPage from './pages/AvatarPage';
@@ -14,7 +15,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <SocketProvider>
+          <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/avatar" element={<AvatarPage />} />
@@ -24,7 +26,8 @@ function App() {
           <Route path="/map" element={<MapPage />} />
           <Route path="/diary" element={<DiaryPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+          </Routes>
+        </SocketProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -63,6 +63,13 @@ export function AuthProvider({ children }) {
     }
   };
   
+  // Get token from cookie
+  const getToken = () => {
+    const cookies = document.cookie.split(';');
+    const tokenCookie = cookies.find(c => c.trim().startsWith('token='));
+    return tokenCookie ? tokenCookie.split('=')[1] : null;
+  };
+
   const value = {
     user,
     loading,
@@ -71,6 +78,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     isAuthenticated: !!user,
+    token: getToken(),
   };
   
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
