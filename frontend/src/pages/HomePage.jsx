@@ -30,8 +30,13 @@ export default function HomePage() {
       <main className="home-main">
         <section className="quick-links">
           <Link to="/avatar" className="quick-link-card">
-            <span className="link-icon">🧑</span>
             <span className="link-text">アバター編集</span>
+          </Link>
+          <Link to="/quests" className="quick-link-card">
+            <span className="link-text">クエスト</span>
+          </Link>
+          <Link to="/map" className="quick-link-card">
+            <span className="link-text">マップ</span>
           </Link>
         </section>
         
