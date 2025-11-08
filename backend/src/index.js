@@ -12,6 +12,7 @@ import checkinRoutes from './routes/checkins.js';
 import statsRoutes from './routes/stats.js';
 import avatarRoutes from './routes/avatar.js';
 import questRoutes from './routes/quests.js';
+import diaryRoutes from './routes/diary.js';
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use('/auth', authLimiter, authRoutes);
 app.use('/checkins', checkinRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/quests', questRoutes);
+app.use('/diary', diaryRoutes);
 app.use('/', statsRoutes); // public/stats, leaderboard, users/:id/summary
 
 // 404 handler

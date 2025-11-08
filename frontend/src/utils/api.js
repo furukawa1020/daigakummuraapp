@@ -126,3 +126,32 @@ export const questApi = {
     method: 'POST',
   }),
 };
+
+// Diary API
+export const diaryApi = {
+  createPost: (data) => fetchWithAuth('/diary', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  getPosts: (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return fetchWithAuth(`/diary${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  getPost: (postId) => fetchWithAuth(`/diary/${postId}`),
+  
+  updatePost: (postId, data) => fetchWithAuth(`/diary/${postId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  deletePost: (postId) => fetchWithAuth(`/diary/${postId}`, {
+    method: 'DELETE',
+  }),
+  
+  reactToPost: (postId, reactionType) => fetchWithAuth(`/diary/${postId}/react`, {
+    method: 'POST',
+    body: JSON.stringify({ reaction_type: reactionType }),
+  }),
+};
