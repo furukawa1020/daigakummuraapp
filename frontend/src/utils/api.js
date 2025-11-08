@@ -155,3 +155,27 @@ export const diaryApi = {
     body: JSON.stringify({ reaction_type: reactionType }),
   }),
 };
+
+// Chat API
+export const chatApi = {
+  getChannels: () => fetchWithAuth('/chat/channels'),
+  
+  getMessages: (channelId, params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return fetchWithAuth(`/chat/channels/${channelId}/messages${query ? `?${query}` : ''}`);
+  },
+  
+  sendMessage: (channelId, data) => fetchWithAuth(`/chat/channels/${channelId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  createDM: (targetUserId) => fetchWithAuth('/chat/channels/dm', {
+    method: 'POST',
+    body: JSON.stringify({ targetUserId }),
+  }),
+  
+  deleteMessage: (messageId) => fetchWithAuth(`/chat/messages/${messageId}`, {
+    method: 'DELETE',
+  }),
+};

@@ -1,10 +1,12 @@
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { config } from './config/index.js';
 import { errorHandler, notFoundHandler } from './utils/errors.js';
+import { setupSocketIO } from './socket/index.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -13,6 +15,7 @@ import statsRoutes from './routes/stats.js';
 import avatarRoutes from './routes/avatar.js';
 import questRoutes from './routes/quests.js';
 import diaryRoutes from './routes/diary.js';
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 
@@ -68,6 +71,7 @@ app.use('/checkins', checkinRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/quests', questRoutes);
 app.use('/diary', diaryRoutes);
+app.use('/chat', chatRoutes);
 app.use('/', statsRoutes); // public/stats, leaderboard, users/:id/summary
 
 // 404 handler
@@ -76,9 +80,14 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 
+// Create HTTP server and setup Socket.IO
+const httpServer = createServer(app);
+const io = setupSocketIO(httpServer);
+
 // Start server
-const server = app.listen(config.port, () => {
+const server = httpServer.listen(config.port, () => {
   console.log(`🚀 Server running on port ${config.port}`);
+  console.log(`💬 Socket.IO enabled`);
   console.log(`📍 Village center: ${config.village.centerLat}, ${config.village.centerLng}`);
   console.log(`📏 Village radius: ${config.village.radiusKm} km`);
   console.log(`🌍 Environment: ${config.nodeEnv}`);
