@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../db/index.js';
+import db from '../db/index.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { AppError } from '../utils/errors.js';
 
@@ -10,6 +10,8 @@ const router = express.Router();
  * POST /api/quests
  */
 router.post('/', authenticateToken, async (req, res, next) => {
+  const client = await db.pool.connect();
+  
   try {
     const { title, description, location, visibility = 'public' } = req.body;
     const userId = req.user.userId;
@@ -22,16 +24,41 @@ router.post('/', authenticateToken, async (req, res, next) => {
       throw new AppError('無効な公開範囲です', 400);
     }
 
-    const result = await query(
+    await client.query('BEGIN');
+
+    // Create quest
+    const questResult = await client.query(
       `INSERT INTO quests (creator_id, title, description, location, visibility, status)
        VALUES ($1, $2, $3, $4, $5, 'active')
        RETURNING *`,
       [userId, title, description, location, visibility]
     );
 
-    res.status(201).json(result.rows[0]);
+    const quest = questResult.rows[0];
+
+    // Create chat channel for the quest
+    const channelResult = await client.query(
+      `INSERT INTO chat_channels (type, name, quest_id)
+       VALUES ('quest', $1, $2)
+       RETURNING id`,
+      [title, quest.id]
+    );
+
+    // Add creator to the channel
+    await client.query(
+      `INSERT INTO channel_members (channel_id, user_id)
+       VALUES ($1, $2)`,
+      [channelResult.rows[0].id, userId]
+    );
+
+    await client.query('COMMIT');
+
+    res.status(201).json(quest);
   } catch (error) {
+    await client.query('ROLLBACK');
     next(error);
+  } finally {
+    client.release();
   }
 });
 
@@ -247,12 +274,14 @@ router.delete('/:id', authenticateToken, async (req, res, next) => {
  * POST /api/quests/:id/join
  */
 router.post('/:id/join', authenticateToken, async (req, res, next) => {
+  const client = await db.pool.connect();
+  
   try {
     const { id } = req.params;
     const userId = req.user.userId;
 
     // クエスト存在チェック
-    const quest = await query(
+    const quest = await client.query(
       'SELECT * FROM quests WHERE id = $1 AND status = $2',
       [id, 'active']
     );
@@ -262,7 +291,7 @@ router.post('/:id/join', authenticateToken, async (req, res, next) => {
     }
 
     // 既に参加済みかチェック
-    const existing = await query(
+    const existing = await client.query(
       'SELECT * FROM quest_participants WHERE quest_id = $1 AND user_id = $2',
       [id, userId]
     );
@@ -271,16 +300,39 @@ router.post('/:id/join', authenticateToken, async (req, res, next) => {
       throw new AppError('既にこのクエストに参加しています', 400);
     }
 
-    const result = await query(
+    await client.query('BEGIN');
+
+    // Add to quest participants
+    const result = await client.query(
       `INSERT INTO quest_participants (quest_id, user_id, status)
        VALUES ($1, $2, 'joined')
        RETURNING *`,
       [id, userId]
     );
 
+    // Add to quest chat channel
+    const channelResult = await client.query(
+      'SELECT id FROM chat_channels WHERE quest_id = $1 AND type = $2',
+      [id, 'quest']
+    );
+
+    if (channelResult.rows.length > 0) {
+      await client.query(
+        `INSERT INTO channel_members (channel_id, user_id)
+         VALUES ($1, $2)
+         ON CONFLICT (channel_id, user_id) DO NOTHING`,
+        [channelResult.rows[0].id, userId]
+      );
+    }
+
+    await client.query('COMMIT');
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    await client.query('ROLLBACK');
     next(error);
+  } finally {
+    client.release();
   }
 });
 

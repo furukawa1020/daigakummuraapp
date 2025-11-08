@@ -41,6 +41,9 @@ export default function HomePage() {
           <Link to="/diary" className="quick-link-card">
             <span className="link-text">日記ログ</span>
           </Link>
+          <Link to="/chat" className="quick-link-card">
+            <span className="link-text">チャット</span>
+          </Link>
         </section>
         
         <section className="checkin-section">

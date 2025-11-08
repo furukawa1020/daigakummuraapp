@@ -9,6 +9,7 @@ import QuestCreatePage from './pages/QuestCreatePage';
 import QuestDetailPage from './pages/QuestDetailPage';
 import MapPage from './pages/MapPage';
 import DiaryPage from './pages/DiaryPage';
+import ChatPage from './pages/ChatPage';
 import './styles/index.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/quests/:id" element={<QuestDetailPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/diary" element={<DiaryPage />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </SocketProvider>
