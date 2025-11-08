@@ -7,6 +7,7 @@ import QuestsPage from './pages/QuestsPage';
 import QuestCreatePage from './pages/QuestCreatePage';
 import QuestDetailPage from './pages/QuestDetailPage';
 import MapPage from './pages/MapPage';
+import DiaryPage from './pages/DiaryPage';
 import './styles/index.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/quests/new" element={<QuestCreatePage />} />
           <Route path="/quests/:id" element={<QuestDetailPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/diary" element={<DiaryPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
