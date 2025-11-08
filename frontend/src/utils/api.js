@@ -89,3 +89,40 @@ export const avatarApi = {
     method: 'POST',
   }),
 };
+
+// Quest API
+export const questApi = {
+  createQuest: (data) => fetchWithAuth('/quests', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  getQuests: (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return fetchWithAuth(`/quests${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  getQuest: (questId) => fetchWithAuth(`/quests/${questId}`),
+  
+  updateQuest: (questId, data) => fetchWithAuth(`/quests/${questId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  deleteQuest: (questId) => fetchWithAuth(`/quests/${questId}`, {
+    method: 'DELETE',
+  }),
+  
+  joinQuest: (questId) => fetchWithAuth(`/quests/${questId}/join`, {
+    method: 'POST',
+  }),
+  
+  completeQuest: (questId, reflection) => fetchWithAuth(`/quests/${questId}/complete`, {
+    method: 'POST',
+    body: JSON.stringify({ reflection }),
+  }),
+  
+  cancelQuest: (questId) => fetchWithAuth(`/quests/${questId}/cancel`, {
+    method: 'POST',
+  }),
+};
