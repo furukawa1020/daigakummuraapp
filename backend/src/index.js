@@ -10,6 +10,7 @@ import { errorHandler, notFoundHandler } from './utils/errors.js';
 import authRoutes from './routes/auth.js';
 import checkinRoutes from './routes/checkins.js';
 import statsRoutes from './routes/stats.js';
+import avatarRoutes from './routes/avatar.js';
 
 const app = express();
 
