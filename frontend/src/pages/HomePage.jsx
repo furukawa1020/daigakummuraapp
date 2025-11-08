@@ -44,6 +44,9 @@ export default function HomePage() {
           <Link to="/chat" className="quick-link-card">
             <span className="link-text">チャット</span>
           </Link>
+          <Link to="/calendar" className="quick-link-card">
+            <span className="link-text">カレンダー</span>
+          </Link>
         </section>
         
         <section className="checkin-section">

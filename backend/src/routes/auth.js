@@ -50,6 +50,24 @@ router.post('/register', async (req, res, next) => {
     );
     
     const user = result.rows[0];
+
+    // Add user to global chat channel
+    try {
+      const globalChannel = await query(
+        `SELECT id FROM chat_channels WHERE type = 'global' LIMIT 1`
+      );
+      
+      if (globalChannel.rows.length > 0) {
+        await query(
+          `INSERT INTO channel_members (channel_id, user_id)
+           VALUES ($1, $2)`,
+          [globalChannel.rows[0].id, user.id]
+        );
+      }
+    } catch (channelError) {
+      console.error('Failed to add user to global channel:', channelError);
+      // Don't fail registration if channel join fails
+    }
     
     // Generate token
     const token = generateToken(user.id);

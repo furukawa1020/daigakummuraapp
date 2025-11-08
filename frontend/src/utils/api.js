@@ -179,3 +179,25 @@ export const chatApi = {
     method: 'DELETE',
   }),
 };
+
+// Calendar API
+export const calendarApi = {
+  getEvents: (params) => {
+    const query = new URLSearchParams(params).toString();
+    return fetchWithAuth(`/calendar/events?${query}`);
+  },
+  
+  createEvent: (data) => fetchWithAuth('/calendar/events', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  updateEvent: (eventId, data) => fetchWithAuth(`/calendar/events/${eventId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  deleteEvent: (eventId) => fetchWithAuth(`/calendar/events/${eventId}`, {
+    method: 'DELETE',
+  }),
+};

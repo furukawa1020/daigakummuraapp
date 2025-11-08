@@ -16,6 +16,7 @@ import avatarRoutes from './routes/avatar.js';
 import questRoutes from './routes/quests.js';
 import diaryRoutes from './routes/diary.js';
 import chatRoutes from './routes/chat.js';
+import calendarRoutes from './routes/calendar.js';
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use('/avatar', avatarRoutes);
 app.use('/quests', questRoutes);
 app.use('/diary', diaryRoutes);
 app.use('/chat', chatRoutes);
+app.use('/calendar', calendarRoutes);
 app.use('/', statsRoutes); // public/stats, leaderboard, users/:id/summary
 
 // 404 handler
