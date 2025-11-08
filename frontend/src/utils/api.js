@@ -69,3 +69,23 @@ export const statsApi = {
     fetch(`${API_BASE_URL}/leaderboard?type=${type}&limit=${limit}`)
       .then(res => res.json()),
 };
+
+// Avatar API
+export const avatarApi = {
+  getParts: () => fetchWithAuth('/avatar/parts'),
+  
+  getMyParts: () => fetchWithAuth('/avatar/my-parts'),
+  
+  unlockPart: (partId) => fetchWithAuth(`/avatar/unlock/${partId}`, {
+    method: 'POST',
+  }),
+  
+  saveAvatar: (avatarState) => fetchWithAuth('/avatar/save', {
+    method: 'POST',
+    body: JSON.stringify({ avatarState }),
+  }),
+  
+  autoUnlock: () => fetchWithAuth('/avatar/auto-unlock', {
+    method: 'POST',
+  }),
+};

@@ -63,6 +63,7 @@ app.get('/healthz', (req, res) => {
 // Routes
 app.use('/auth', authLimiter, authRoutes);
 app.use('/checkins', checkinRoutes);
+app.use('/avatar', avatarRoutes);
 app.use('/', statsRoutes); // public/stats, leaderboard, users/:id/summary
 
 // 404 handler
