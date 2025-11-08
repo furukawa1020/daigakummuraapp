@@ -1,0 +1,69 @@
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.loading-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-header {
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.home-header h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.home-header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.home-main {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.checkin-section {
+  margin-bottom: 2rem;
+}
+
+.stats-section {
+  margin-bottom: 2rem;
+}
+
+[data-theme='dark'] .home-header {
+  background-color: #2a2a2a;
+}
+
+[data-theme='dark'] .home-header h1 {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .home-header p {
+  color: #999;
+}
+
+[data-theme='dark'] .home-page {
+  background: linear-gradient(to bottom, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+@media (max-width: 768px) {
+  .home-main {
+    padding: 1rem 0.5rem;
+  }
+  
+  .home-header h1 {
+    font-size: 1.5rem;
+  }
+}
