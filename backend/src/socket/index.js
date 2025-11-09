@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/index.js';
-import db from '../db/index.js';
+import { query } from '../db/index.js';
 
 export function setupSocketIO(httpServer) {
   const io = new Server(httpServer, {
@@ -23,7 +23,7 @@ export function setupSocketIO(httpServer) {
       const decoded = jwt.verify(token, config.jwtSecret);
       
       // Get user info
-      const result = await db.query(
+      const result = await query(
         'SELECT id, username, nickname FROM users WHERE id = $1',
         [decoded.id]
       );
@@ -48,7 +48,7 @@ export function setupSocketIO(httpServer) {
     // Join user's channels
     socket.on('join:channels', async () => {
       try {
-        const result = await db.query(
+        const result = await query(
           `SELECT channel_id 
            FROM channel_members 
            WHERE user_id = $1`,
@@ -72,7 +72,7 @@ export function setupSocketIO(httpServer) {
     socket.on('join:channel', async (channelId) => {
       try {
         // Verify user is member of channel
-        const result = await db.query(
+        const result = await query(
           'SELECT 1 FROM channel_members WHERE channel_id = $1 AND user_id = $2',
           [channelId, socket.user.id]
         );
@@ -98,7 +98,7 @@ export function setupSocketIO(httpServer) {
         const { channelId, content, messageType = 'text', mediaUrl } = data;
 
         // Verify user is member of channel
-        const memberCheck = await db.query(
+        const memberCheck = await query(
           'SELECT 1 FROM channel_members WHERE channel_id = $1 AND user_id = $2',
           [channelId, socket.user.id]
         );
@@ -109,7 +109,7 @@ export function setupSocketIO(httpServer) {
         }
 
         // Save message to database
-        const result = await db.query(
+        const result = await query(
           `INSERT INTO chat_messages (channel_id, user_id, content, message_type, media_url)
            VALUES ($1, $2, $3, $4, $5)
            RETURNING id, content, message_type, media_url, created_at`,
