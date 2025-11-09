@@ -113,7 +113,7 @@ const httpServer = createServer(app);
 const io = setupSocketIO(httpServer);
 
 // Start server
-const server = httpServer.listen(config.port, () => {
+const server = httpServer.listen(config.port, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${config.port}`);
   console.log(`💬 Socket.IO enabled`);
   console.log(`📍 Village center: ${config.village.centerLat}, ${config.village.centerLng}`);
