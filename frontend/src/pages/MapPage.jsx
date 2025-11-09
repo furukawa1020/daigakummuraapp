@@ -6,8 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import './MapPage.css';
 
 const VILLAGE_CENTER = {
-  lat: 36.17773082095139,
-  lng: 136.62608115875494,
+  lat: 36.17683,
+  lng: 136.62458,
 };
 
 const VILLAGE_RADIUS_KM = 5;

@@ -1,5 +1,5 @@
-const VILLAGE_CENTER_LAT = parseFloat(import.meta.env.VITE_VILLAGE_CENTER_LAT) || 36.17773082095139;
-const VILLAGE_CENTER_LNG = parseFloat(import.meta.env.VITE_VILLAGE_CENTER_LNG) || 136.62608115875494;
+const VILLAGE_CENTER_LAT = parseFloat(import.meta.env.VITE_VILLAGE_CENTER_LAT) || 36.17683;
+const VILLAGE_CENTER_LNG = parseFloat(import.meta.env.VITE_VILLAGE_CENTER_LNG) || 136.62458;
 const VILLAGE_RADIUS_KM = parseFloat(import.meta.env.VITE_VILLAGE_RADIUS_KM) || 5.0;
 
 /**
