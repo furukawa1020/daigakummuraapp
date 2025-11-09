@@ -1,12 +1,12 @@
 import express from 'express';
 import { query } from '../db/index.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { AppError } from '../utils/errors.js';
+import { ApiError } from '../utils/errors.js';
 
 const router = express.Router();
 
 /**
- * 日記投稿作成
+ * 日記投稿作�E
  * POST /api/diary
  */
 router.post('/', authenticateToken, async (req, res, next) => {
@@ -15,11 +15,11 @@ router.post('/', authenticateToken, async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!content || content.trim().length === 0) {
-      throw new AppError('投稿内容は必須です', 400);
+      throw new ApiError('投稿冁E��は忁E��でぁE, 400);
     }
 
     if (!['public', 'village', 'friends', 'private'].includes(visibility)) {
-      throw new AppError('無効な公開範囲です', 400);
+      throw new ApiError('無効な公開篁E��でぁE, 400);
     }
 
     const result = await query(
@@ -36,7 +36,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
 });
 
 /**
- * 日記投稿一覧取得（フィード）
+ * 日記投稿一覧取得（フィード！E
  * GET /api/diary
  * Query params: visibility, userId, limit, offset
  */
@@ -71,7 +71,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     const params = [currentUserId];
     let paramIndex = 2;
 
-    // 公開範囲フィルター（privateは本人のみ閲覧可能）
+    // 公開篁E��フィルター�E�Erivateは本人のみ閲覧可能�E�E
     queryText += ` AND (dp.visibility != 'private' OR dp.user_id = $1)`;
 
     if (visibility) {
@@ -97,7 +97,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 /**
- * 日記投稿詳細取得
+ * 日記投稿詳細取征E
  * GET /api/diary/:id
  */
 router.get('/:id', authenticateToken, async (req, res, next) => {
@@ -129,7 +129,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      throw new AppError('投稿が見つかりません', 404);
+      throw new ApiError('投稿が見つかりません', 404);
     }
 
     res.json(result.rows[0]);
@@ -148,18 +148,18 @@ router.put('/:id', authenticateToken, async (req, res, next) => {
     const { content, visibility, media_urls } = req.body;
     const userId = req.user.userId;
 
-    // 投稿者かチェック
+    // 投稿老E��チェチE��
     const post = await query(
       'SELECT user_id FROM diary_posts WHERE id = $1',
       [id]
     );
 
     if (post.rows.length === 0) {
-      throw new AppError('投稿が見つかりません', 404);
+      throw new ApiError('投稿が見つかりません', 404);
     }
 
     if (post.rows[0].user_id !== userId) {
-      throw new AppError('この投稿を編集する権限がありません', 403);
+      throw new ApiError('こ�E投稿を編雁E��る権限がありません', 403);
     }
 
     const updates = [];
@@ -185,7 +185,7 @@ router.put('/:id', authenticateToken, async (req, res, next) => {
     }
 
     if (updates.length === 0) {
-      throw new AppError('更新内容がありません', 400);
+      throw new ApiError('更新冁E��がありません', 400);
     }
 
     params.push(id);
@@ -217,11 +217,11 @@ router.delete('/:id', authenticateToken, async (req, res, next) => {
     );
 
     if (post.rows.length === 0) {
-      throw new AppError('投稿が見つかりません', 404);
+      throw new ApiError('投稿が見つかりません', 404);
     }
 
     if (post.rows[0].user_id !== userId) {
-      throw new AppError('この投稿を削除する権限がありません', 403);
+      throw new ApiError('こ�E投稿を削除する権限がありません', 403);
     }
 
     await query('DELETE FROM diary_posts WHERE id = $1', [id]);
@@ -242,20 +242,20 @@ router.post('/:id/react', authenticateToken, async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!['like', 'love', 'laugh', 'wow', 'sad'].includes(type)) {
-      throw new AppError('無効なリアクションタイプです', 400);
+      throw new ApiError('無効なリアクションタイプでぁE, 400);
     }
 
-    // 投稿存在チェック
+    // 投稿存在チェチE��
     const post = await query(
       'SELECT id FROM diary_posts WHERE id = $1',
       [id]
     );
 
     if (post.rows.length === 0) {
-      throw new AppError('投稿が見つかりません', 404);
+      throw new ApiError('投稿が見つかりません', 404);
     }
 
-    // 既存リアクションをチェック
+    // 既存リアクションをチェチE��
     const existing = await query(
       'SELECT * FROM reactions WHERE post_id = $1 AND post_type = $2 AND user_id = $3',
       [id, 'diary', userId]
@@ -285,3 +285,4 @@ router.post('/:id/react', authenticateToken, async (req, res, next) => {
 });
 
 export default router;
+

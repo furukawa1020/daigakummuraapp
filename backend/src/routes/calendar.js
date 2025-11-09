@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import db from '../db/index.js';
-import { AppError } from '../utils/errors.js';
+import { query } from '../db/index.js';
+import { ApiError } from '../utils/errors.js';
 
 const router = express.Router();
 
@@ -12,11 +12,11 @@ router.get('/events', authenticateToken, async (req, res, next) => {
     const { start, end } = req.query;
 
     if (!start || !end) {
-      throw new AppError('Start and end dates are required', 400);
+      throw new ApiError('Start and end dates are required', 400);
     }
 
     // Get personal events
-    const personalEvents = await db.query(
+    const personalEvents = await query(
       `SELECT 
         id,
         'personal' as type,
@@ -37,7 +37,7 @@ router.get('/events', authenticateToken, async (req, res, next) => {
     );
 
     // Get quest deadlines (for quests user is participating in)
-    const questEvents = await db.query(
+    const questEvents = await query(
       `SELECT 
         q.id,
         'quest' as type,
@@ -61,11 +61,11 @@ router.get('/events', authenticateToken, async (req, res, next) => {
     );
 
     // Get checkin history
-    const checkinEvents = await db.query(
+    const checkinEvents = await query(
       `SELECT 
         id,
         'checkin' as type,
-        'チェックイン' as title,
+        'チェチE��イン' as title,
         null as description,
         checkin_time as start_time,
         checkout_time as end_time,
@@ -109,10 +109,10 @@ router.post('/events', authenticateToken, async (req, res, next) => {
     } = req.body;
 
     if (!title || !startTime) {
-      throw new AppError('Title and start time are required', 400);
+      throw new ApiError('Title and start time are required', 400);
     }
 
-    const result = await db.query(
+    const result = await query(
       `INSERT INTO calendar_events 
         (user_id, title, description, start_time, end_time, all_day, location, reminder_minutes, color)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -152,7 +152,7 @@ router.put('/events/:id', authenticateToken, async (req, res, next) => {
       color,
     } = req.body;
 
-    const result = await db.query(
+    const result = await query(
       `UPDATE calendar_events
        SET title = COALESCE($1, title),
            description = COALESCE($2, description),
@@ -169,7 +169,7 @@ router.put('/events/:id', authenticateToken, async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      throw new AppError('Event not found or access denied', 404);
+      throw new ApiError('Event not found or access denied', 404);
     }
 
     res.json(result.rows[0]);
@@ -184,13 +184,13 @@ router.delete('/events/:id', authenticateToken, async (req, res, next) => {
     const userId = req.user.id;
     const { id } = req.params;
 
-    const result = await db.query(
+    const result = await query(
       'DELETE FROM calendar_events WHERE id = $1 AND user_id = $2 RETURNING id',
       [id, userId]
     );
 
     if (result.rows.length === 0) {
-      throw new AppError('Event not found or access denied', 404);
+      throw new ApiError('Event not found or access denied', 404);
     }
 
     res.json({ message: 'Event deleted successfully' });
@@ -200,3 +200,4 @@ router.delete('/events/:id', authenticateToken, async (req, res, next) => {
 });
 
 export default router;
+

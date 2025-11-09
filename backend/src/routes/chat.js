@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import db from '../db/index.js';
-import { AppError } from '../utils/errors.js';
+import { query } from '../db/index.js';
+import { ApiError } from '../utils/errors.js';
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.get('/channels', authenticateToken, async (req, res, next) => {
   try {
     const userId = req.user.id;
     
-    const result = await db.query(
+    const result = await query(
       `SELECT DISTINCT
         c.id,
         c.type,
@@ -61,13 +61,13 @@ router.get('/channels/:channelId/messages', authenticateToken, async (req, res, 
     const { before, limit = 50 } = req.query;
 
     // Check if user is member of channel
-    const memberCheck = await db.query(
+    const memberCheck = await query(
       'SELECT 1 FROM channel_members WHERE channel_id = $1 AND user_id = $2',
       [channelId, userId]
     );
 
     if (memberCheck.rows.length === 0) {
-      throw new AppError('Channel not found or access denied', 404);
+      throw new ApiError('Channel not found or access denied', 404);
     }
 
     let query = `
@@ -96,10 +96,10 @@ router.get('/channels/:channelId/messages', authenticateToken, async (req, res, 
     query += ` ORDER BY m.created_at DESC LIMIT $${queryParams.length + 1}`;
     queryParams.push(limit);
 
-    const result = await db.query(query, queryParams);
+    const result = await query(query, queryParams);
 
     // Update last_read_at
-    await db.query(
+    await query(
       `UPDATE channel_members 
        SET last_read_at = NOW() 
        WHERE channel_id = $1 AND user_id = $2`,
@@ -120,20 +120,20 @@ router.post('/channels/:channelId/messages', authenticateToken, async (req, res,
     const { content, messageType = 'text', mediaUrl } = req.body;
 
     if (!content && !mediaUrl) {
-      throw new AppError('Message content or media URL is required', 400);
+      throw new ApiError('Message content or media URL is required', 400);
     }
 
     // Check if user is member of channel
-    const memberCheck = await db.query(
+    const memberCheck = await query(
       'SELECT 1 FROM channel_members WHERE channel_id = $1 AND user_id = $2',
       [channelId, userId]
     );
 
     if (memberCheck.rows.length === 0) {
-      throw new AppError('Channel not found or access denied', 404);
+      throw new ApiError('Channel not found or access denied', 404);
     }
 
-    const result = await db.query(
+    const result = await query(
       `INSERT INTO chat_messages (channel_id, user_id, content, message_type, media_url)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, content, message_type, media_url, created_at`,
@@ -143,7 +143,7 @@ router.post('/channels/:channelId/messages', authenticateToken, async (req, res,
     const message = result.rows[0];
     
     // Get user info
-    const userResult = await db.query(
+    const userResult = await query(
       'SELECT username, nickname, avatar_data FROM users WHERE id = $1',
       [userId]
     );
@@ -165,15 +165,15 @@ router.post('/channels/dm', authenticateToken, async (req, res, next) => {
     const { targetUserId } = req.body;
 
     if (!targetUserId) {
-      throw new AppError('Target user ID is required', 400);
+      throw new ApiError('Target user ID is required', 400);
     }
 
     if (targetUserId === userId) {
-      throw new AppError('Cannot create DM with yourself', 400);
+      throw new ApiError('Cannot create DM with yourself', 400);
     }
 
     // Check if DM channel already exists
-    const existingChannel = await db.query(
+    const existingChannel = await query(
       `SELECT c.id
        FROM chat_channels c
        WHERE c.type = 'dm'
@@ -228,13 +228,13 @@ router.delete('/messages/:messageId', authenticateToken, async (req, res, next) 
     const userId = req.user.id;
     const { messageId } = req.params;
 
-    const result = await db.query(
+    const result = await query(
       'DELETE FROM chat_messages WHERE id = $1 AND user_id = $2 RETURNING id',
       [messageId, userId]
     );
 
     if (result.rows.length === 0) {
-      throw new AppError('Message not found or access denied', 404);
+      throw new ApiError('Message not found or access denied', 404);
     }
 
     res.json({ message: 'Message deleted successfully' });
@@ -244,3 +244,4 @@ router.delete('/messages/:messageId', authenticateToken, async (req, res, next) 
 });
 
 export default router;
+

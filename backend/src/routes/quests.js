@@ -1,12 +1,12 @@
 import express from 'express';
-import db from '../db/index.js';
+import { query } from '../db/index.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { AppError } from '../utils/errors.js';
+import { ApiError } from '../utils/errors.js';
 
 const router = express.Router();
 
 /**
- * クエスト作成
+ * クエスト作�E
  * POST /api/quests
  */
 router.post('/', authenticateToken, async (req, res, next) => {
@@ -17,11 +17,11 @@ router.post('/', authenticateToken, async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!title || !description) {
-      throw new AppError('タイトルと説明は必須です', 400);
+      throw new ApiError('タイトルと説明�E忁E��でぁE, 400);
     }
 
     if (!['public', 'village', 'private'].includes(visibility)) {
-      throw new AppError('無効な公開範囲です', 400);
+      throw new ApiError('無効な公開篁E��でぁE, 400);
     }
 
     await client.query('BEGIN');
@@ -63,7 +63,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
 });
 
 /**
- * クエスト一覧取得
+ * クエスト一覧取征E
  * GET /api/quests
  * Query params: status, visibility, creatorId
  */
@@ -90,7 +90,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     const params = [userId];
     let paramIndex = 2;
 
-    // 公開範囲フィルター（privateは作成者のみ閲覧可能）
+    // 公開篁E��フィルター�E�Erivateは作�E老E�Eみ閲覧可能�E�E
     queryText += ` AND (q.visibility != 'private' OR q.creator_id = $1)`;
 
     if (status) {
@@ -121,7 +121,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 /**
- * クエスト詳細取得
+ * クエスト詳細取征E
  * GET /api/quests/:id
  */
 router.get('/:id', authenticateToken, async (req, res, next) => {
@@ -155,7 +155,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      throw new AppError('クエストが見つかりません', 404);
+      throw new ApiError('クエストが見つかりません', 404);
     }
 
     res.json(result.rows[0]);
@@ -174,18 +174,18 @@ router.put('/:id', authenticateToken, async (req, res, next) => {
     const { title, description, location, visibility, status } = req.body;
     const userId = req.user.userId;
 
-    // 作成者かチェック
+    // 作�E老E��チェチE��
     const quest = await query(
       'SELECT creator_id FROM quests WHERE id = $1',
       [id]
     );
 
     if (quest.rows.length === 0) {
-      throw new AppError('クエストが見つかりません', 404);
+      throw new ApiError('クエストが見つかりません', 404);
     }
 
     if (quest.rows[0].creator_id !== userId) {
-      throw new AppError('クエストを更新する権限がありません', 403);
+      throw new ApiError('クエストを更新する権限がありません', 403);
     }
 
     const updates = [];
@@ -223,7 +223,7 @@ router.put('/:id', authenticateToken, async (req, res, next) => {
     }
 
     if (updates.length === 0) {
-      throw new AppError('更新内容がありません', 400);
+      throw new ApiError('更新冁E��がありません', 400);
     }
 
     params.push(id);
@@ -255,11 +255,11 @@ router.delete('/:id', authenticateToken, async (req, res, next) => {
     );
 
     if (quest.rows.length === 0) {
-      throw new AppError('クエストが見つかりません', 404);
+      throw new ApiError('クエストが見つかりません', 404);
     }
 
     if (quest.rows[0].creator_id !== userId) {
-      throw new AppError('クエストを削除する権限がありません', 403);
+      throw new ApiError('クエストを削除する権限がありません', 403);
     }
 
     await query('DELETE FROM quests WHERE id = $1', [id]);
@@ -280,24 +280,24 @@ router.post('/:id/join', authenticateToken, async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.userId;
 
-    // クエスト存在チェック
+    // クエスト存在チェチE��
     const quest = await client.query(
       'SELECT * FROM quests WHERE id = $1 AND status = $2',
       [id, 'active']
     );
 
     if (quest.rows.length === 0) {
-      throw new AppError('アクティブなクエストが見つかりません', 404);
+      throw new ApiError('アクチE��ブなクエストが見つかりません', 404);
     }
 
-    // 既に参加済みかチェック
+    // 既に参加済みかチェチE��
     const existing = await client.query(
       'SELECT * FROM quest_participants WHERE quest_id = $1 AND user_id = $2',
       [id, userId]
     );
 
     if (existing.rows.length > 0) {
-      throw new AppError('既にこのクエストに参加しています', 400);
+      throw new ApiError('既にこ�Eクエストに参加してぁE��ぁE, 400);
     }
 
     await client.query('BEGIN');
@@ -337,7 +337,7 @@ router.post('/:id/join', authenticateToken, async (req, res, next) => {
 });
 
 /**
- * クエスト完了報告
+ * クエスト完亁E��呁E
  * POST /api/quests/:id/complete
  */
 router.post('/:id/complete', authenticateToken, async (req, res, next) => {
@@ -347,25 +347,25 @@ router.post('/:id/complete', authenticateToken, async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!reflection || reflection.trim().length === 0) {
-      throw new AppError('振り返りは必須です', 400);
+      throw new ApiError('振り返りは忁E��でぁE, 400);
     }
 
-    // 参加状態チェック
+    // 参加状態チェチE��
     const participant = await query(
       'SELECT * FROM quest_participants WHERE quest_id = $1 AND user_id = $2',
       [id, userId]
     );
 
     if (participant.rows.length === 0) {
-      throw new AppError('このクエストに参加していません', 400);
+      throw new ApiError('こ�Eクエストに参加してぁE��せん', 400);
     }
 
     if (participant.rows[0].status === 'completed') {
-      throw new AppError('既に完了報告済みです', 400);
+      throw new ApiError('既に完亁E��告済みでぁE, 400);
     }
 
     if (participant.rows[0].status === 'cancelled') {
-      throw new AppError('キャンセル済みのクエストは完了できません', 400);
+      throw new ApiError('キャンセル済みのクエスト�E完亁E��きません', 400);
     }
 
     const result = await query(
@@ -397,11 +397,11 @@ router.post('/:id/cancel', authenticateToken, async (req, res, next) => {
     );
 
     if (participant.rows.length === 0) {
-      throw new AppError('このクエストに参加していません', 400);
+      throw new ApiError('こ�Eクエストに参加してぁE��せん', 400);
     }
 
     if (participant.rows[0].status === 'completed') {
-      throw new AppError('完了済みのクエストはキャンセルできません', 400);
+      throw new ApiError('完亁E��みのクエスト�Eキャンセルできません', 400);
     }
 
     const result = await query(
@@ -419,3 +419,4 @@ router.post('/:id/cancel', authenticateToken, async (req, res, next) => {
 });
 
 export default router;
+
