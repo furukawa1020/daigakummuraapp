@@ -44,7 +44,24 @@ const MapPage = () => {
     try {
       map.current = new maplibregl.Map({
         container: mapContainer.current,
-        style: 'https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json',
+        style: {
+          version: 8,
+          sources: {
+            'osm': {
+              type: 'raster',
+              tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+              tileSize: 256,
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }
+          },
+          layers: [{
+            id: 'osm',
+            type: 'raster',
+            source: 'osm',
+            minzoom: 0,
+            maxzoom: 19
+          }]
+        },
         center: [VILLAGE_CENTER.lng, VILLAGE_CENTER.lat],
         zoom: 13,
       });
