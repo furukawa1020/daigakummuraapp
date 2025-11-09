@@ -4,9 +4,10 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, 
-    var(--primary) 0%, 
-    var(--secondary) 50%, 
-    var(--accent) 100%);
+    #e8f5e9 0%,
+    #b2dfdb 35%,
+    #80deea 70%,
+    #a5d6a7 100%);
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
@@ -15,21 +16,23 @@
 .auth-page::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 30px 30px;
-  animation: drift 20s linear infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(45, 122, 62, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(58, 124, 165, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(92, 179, 204, 0.06) 0%, transparent 50%);
+  animation: drift 15s ease-in-out infinite;
 }
 
 @keyframes drift {
-  0% {
+  0%, 100% {
     transform: translate(0, 0);
   }
-  100% {
-    transform: translate(30px, 30px);
+  50% {
+    transform: translate(20px, -20px);
   }
 }
 
@@ -124,14 +127,37 @@
 }
 
 .form-group label {
-  font-weight: 500;
-  color: #333;
-  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input {
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  transition: all var(--transition-base);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 122, 62, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-tertiary);
 }
 
 .form-group small {
-  color: #999;
-  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
 }
 
 @media (max-width: 480px) {

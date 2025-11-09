@@ -85,7 +85,7 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="nickname">ニックネーム</label>
+              <label htmlFor="nickname">表示名（ニックネーム）</label>
               <input
                 type="text"
                 id="nickname"
@@ -93,12 +93,15 @@ export default function AuthPage() {
                 value={formData.nickname}
                 onChange={handleChange}
                 required={!isLogin}
+                placeholder="例: 山田太郎"
               />
             </div>
           )}
 
           <div className="form-group">
-            <label htmlFor="email">メールアドレス or ユーザー名</label>
+            <label htmlFor="email">
+              {isLogin ? 'メールアドレス または ユーザー名' : 'メールアドレス'}
+            </label>
             <input
               type="text"
               id="email"
@@ -106,11 +109,12 @@ export default function AuthPage() {
               value={formData.email}
               onChange={handleChange}
               required
+              placeholder={isLogin ? "example@email.com または username" : "example@email.com"}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">パスワード</label>
+            <label htmlFor="password">パスワード {!isLogin && '（8文字以上）'}</label>
             <input
               type="password"
               id="password"
@@ -119,11 +123,12 @@ export default function AuthPage() {
               onChange={handleChange}
               required
               minLength={8}
+              placeholder="••••••••"
             />
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? '処理中...' : isLogin ? 'ログイン' : '登録する'}
+            {loading ? '処理中...' : isLogin ? 'ログインする' : 'アカウント登録'}
           </button>
         </form>
       </div>
