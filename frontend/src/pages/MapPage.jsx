@@ -86,7 +86,7 @@ const MapPage = () => {
         new maplibregl.Marker({ color: '#3b82f6' })
           .setLngLat([VILLAGE_CENTER.lng, VILLAGE_CENTER.lat])
           .setPopup(
-            new maplibregl.Popup().setHTML('<strong>白峰大学村</strong><br>中心地点')
+            new maplibregl.Popup().setHTML('<strong>しらみね大学村</strong><br>中心地点')
           )
           .addTo(map.current);
 
