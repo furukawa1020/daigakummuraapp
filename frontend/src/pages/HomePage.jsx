@@ -23,8 +23,10 @@ export default function HomePage() {
   return (
     <div className="home-page">
       <header className="home-header">
-        <h1>しらみね大学村</h1>
-        <p>ようこそ、{user?.nickname}さん</p>
+        <div className="home-logo">
+          <img src="/images/shiramine-logo.png" alt="しらみね大学村" />
+        </div>
+        <p className="home-welcome">ようこそ、{user?.nickname}さん</p>
       </header>
       
       <main className="home-main">
