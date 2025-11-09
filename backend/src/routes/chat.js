@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { query } from '../db/index.js';
+import { query, pool } from '../db/index.js';
 import { ApiError } from '../utils/errors.js';
 
 const router = express.Router();
@@ -188,7 +188,7 @@ router.post('/channels/dm', authenticateToken, async (req, res, next) => {
     }
 
     // Create new DM channel
-    const client = await db.pool.connect();
+    const client = await pool.connect();
     
     try {
       await client.query('BEGIN');
@@ -244,4 +244,3 @@ router.delete('/messages/:messageId', authenticateToken, async (req, res, next) 
 });
 
 export default router;
-

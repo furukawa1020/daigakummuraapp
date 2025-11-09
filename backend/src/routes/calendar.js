@@ -65,7 +65,7 @@ router.get('/events', authenticateToken, async (req, res, next) => {
       `SELECT 
         id,
         'checkin' as type,
-        'チェチE��イン' as title,
+        'チェックイン' as title,
         null as description,
         checkin_time as start_time,
         checkout_time as end_time,
@@ -200,4 +200,3 @@ router.delete('/events/:id', authenticateToken, async (req, res, next) => {
 });
 
 export default router;
-
