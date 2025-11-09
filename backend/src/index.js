@@ -21,6 +21,9 @@ import calendarRoutes from './routes/calendar.js';
 
 const app = express();
 
+// Trust proxy - Required for Railway, Heroku, etc.
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
