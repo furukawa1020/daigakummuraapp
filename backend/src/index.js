@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import { config } from './config/index.js';
 import { errorHandler, notFoundHandler } from './utils/errors.js';
 import { setupSocketIO } from './socket/index.js';
+import { performSecurityChecks } from './utils/security.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -21,7 +22,29 @@ import calendarRoutes from './routes/calendar.js';
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", config.corsOrigin],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+  frameguard: { action: 'deny' },
+  xssFilter: true,
+  noSniff: true,
+}));
 
 // CORS configuration
 app.use(
@@ -31,9 +54,9 @@ app.use(
   })
 );
 
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Body parsing middleware with size limits
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // Rate limiting
@@ -81,6 +104,9 @@ app.use(notFoundHandler);
 
 // Error handler
 app.use(errorHandler);
+
+// Perform security checks before starting
+performSecurityChecks();
 
 // Create HTTP server and setup Socket.IO
 const httpServer = createServer(app);
