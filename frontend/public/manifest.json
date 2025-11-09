@@ -1,0 +1,26 @@
+{
+  "name": "しらみね大学村",
+  "short_name": "しらみね",
+  "description": "白峰エリア内の活動を見える化し、地域タスク参加・交流・振り返りを促進",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4a90e2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/shiramine-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/shiramine-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "lang": "ja-JP"
+}
