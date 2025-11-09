@@ -75,3 +75,6 @@ export function generateToken(userId) {
     expiresIn: config.jwtExpiresIn,
   });
 }
+
+// Export authenticate as authenticateToken for backward compatibility
+export { authenticate as authenticateToken };
